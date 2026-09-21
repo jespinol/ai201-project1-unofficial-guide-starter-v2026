@@ -23,8 +23,7 @@ For at least 4 of my 5 test questions, the retrieved chunks include one that
 contains the answer.
 
 **Why this target:**
-<!-- e.g. "One of my questions is about a topic only two documents mention, so
-     I expect that one to be hard." -->
+I chose 4 of 5 because the city guides contain specific facts, but a question could use wording that is different from the wording in the source document. A lower target would allow too many retrieval failures, while requiring 5 of 5 would leave no room for one especially difficult question.
 
 ---
 
@@ -33,8 +32,7 @@ contains the answer.
 Every answer the system produces names at least one source document.
 
 **Why this target:**
-<!-- Why all five and not four? What about your setup makes that achievable —
-     or what would have to go wrong for it not to be? -->
+Travelers should be able to identify which guide contains returned details like prices, schedules, and opening hours. I chose every answer rather than 4 of 5 because even one answer without a source cannot be checked against the corpus, and the source filename is stored with every retrieved chunk.
 
 ---
 
@@ -50,47 +48,26 @@ in at least 4 of 5 tries.
      just keep five of them, or the "4 of 5" above has nothing to be 4 of. -->
 
 **Why this target:**
-<!-- What did your distances look like when you set the cutoff in Milestone 4?
-     Was there a clean gap, or did the two groups overlap? -->
+I chose 4 of 5 because retrieval scores may vary and one unrelated question could happen to share words with an existing city guide. Fewer than 4 refusals would mean the system presents unsupported information as if it came from the corpus too often.
 
 ---
 
 ## 4. Something about your chunks
 
-<!-- YOU WRITE THIS ONE.
-
-     How would you know if your chunks were the right size? Name something
-     countable or observable.
-
-     Examples of the right shape — don't copy these, they should come from
-     what you actually saw in Milestone 3:
-       - "At least 4 of 5 sampled chunks read as a complete thought, with no
-          sentence cut in half at either end."
-       - "No chunk is shorter than 200 characters, since anything below that
-          in my corpus turned out to be a heading with no content under it." -->
-
-
+For at least 4 of my 5 test questions, at least one retrieved chunk contains both the expected answer from the question's `expects` field and the name of the place the answer describes.
 
 **Why this target:**
-
+The city guides contain many similar facts about prices, schedules, and opening hours, so an answer is only useful when it stays with the relevant place name. I chose 4 of 5 because one fact may be separated from its heading, but allowing more than one such separation would indicate that the chunks are losing too much context.
 
 
 ---
 
 ## 5. Your choice
 
-<!-- YOU WRITE THIS ONE TOO.
-
-     Pick something you actually care about getting right. It could be about
-     speed, about refusals, about a particular kind of question your corpus
-     handles badly, about source attribution being correct rather than merely
-     present — anything, as long as it names a number or an observable
-     outcome. -->
-
-
+For at least 4 of my 5 test questions, a case-insensitive comparison finds the word or short phrase recorded in that question's `expects` field in the final answer.
 
 **Why this target:**
-
+I chose 4 of 5 because this checks whether the final answer communicates the specific, expected fact, not just if the retrieval found a related item in the text. A lower target would permit too many incorrect answers, but 5 of 5 would allow no margin for one correct answer that expresses a given fact differently.
 
 
 ---
