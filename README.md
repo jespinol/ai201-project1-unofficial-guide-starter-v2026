@@ -1,6 +1,7 @@
 # The Unofficial Guide
 
-<!-- Replace this line with your name and which corpus you picked. -->
+**Author:** Jose Espinola-Lopez  
+**Corpus:** city_guides
 
 > **This file is your submission.** Fill it in as you go — most sections get
 > written during the milestone that produces them, not at the end.
@@ -21,26 +22,14 @@
 
 ## What This Does
 
-<!-- Three or four sentences. Which corpus you picked, and the kinds of
-     questions your system answers. Write it for someone who has never seen
-     this repo.
-
-     Milestone 5. -->
+This system is an guide assistant built on the `city_guides` corpus, that covers regional towns, travel tips, transit, and local food across locations like Brightwater, Kestrelford, Marchwood, Halden Bay, etc. It answers visitor questions regarding schedules, costs, transit options, and dining recommendations by retrieving context from regional guides. If a question is outside the scope of the corpus, the query is rejected with a refusal rather than hallucinating an answer.
 
 ## Chunking Strategy
 
-**Chunk size:**
-**Overlap:**
+**Chunk size:** ~310 characters on average (split by section)
+**Overlap:** None, title is added for context preservation
 
-<!-- What about YOUR documents made you pick these numbers? Short posts and
-     long sectioned guides don't want the same chunking, and "800 seemed
-     reasonable" earns nothing. Point at something you noticed when you read
-     the documents in Milestone 1.
-
-     If you changed your mind partway through, say so and say why. That's worth
-     more than pretending you got it right first time.
-
-     Milestone 3. -->
+The `city_guides` corpus is structured as Markdown documents with clear topic headers (e.g. `## Getting there`, `## Eat and drink`, `## What to see`). The default window sliced straight through sections, cutting sentences in half and mixing up unrelated topics into a chunk. Instead of arbitrary character-based slicing, I implemented a section-aware chunker that splits on `##` headings and adds the title (e.g. `# City Name`) to every chunk. This way, every chunk represents a complete topic that retains its context without splitting up sentences.
 
 ## Sample Chunks
 
@@ -167,9 +156,9 @@ Sources retrieved: guide_brightwater.md, guide_eating.md, guide_regional_transpo
 
      Milestone 5. -->
 
-**1.**
+**1.** After doing it manually, I asked the AI to pressure-test my acceptance criteria in `criteria.md` against the self-check rubric. The AI initially proposed a chunk size criterion checking character ranges and complete sentences. I pushed back because arbitrary character counts don't necessarily measure usefulness, and cutting a sentence at a boundary doesn't necessarily break meaning. We revised it to verify that chunks contain both the answer and the place it describes for context preservation.
 
-**2.**
+**2.** When evaluating the starter's fixed-size chunking, the AI analyzed sample chunks and highlighted that document endings produced sentence fragments lacking place names. During initial iteration in some chunks I did not notice this issue as they appeared complete sentences, which led me to believe the fixed-sized chunking was producing very good responses. The AI helped identify these edge-case fragments, which led to implementing a section-aware chunker that splits on headers and add the document title to keep every chunk self-contained.
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
