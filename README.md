@@ -114,14 +114,24 @@ cards only.
 <!-- One complete question and answer, pasted as text, with the source line
      visible. Milestone 4. -->
 
-**Question:**
+**Question:**  What time does Brightwater's Tuesday market finish?
 
 **Answer:**
 
 ```
+> .venv/bin/python app.py ask "What time does Brightwater's Tuesday market finish?"
+  (best distance 0.232, cutoff 0.6)
+
+Brightwater's Tuesday market finishes by 1pm.
+
+Sources: `guide_eating.md` and `guide_brightwater.md`
+
+Sources retrieved: guide_brightwater.md, guide_eating.md, guide_regional_transport.md, guide_seasons.md
+
+1 model calls this session, 669 tokens (637 in, 32 out)
 ```
 
-**My relevance cutoff:**
+**My relevance cutoff:** 0.6
 
 <!-- The number you set in config.py, and how you got there.
 
@@ -134,7 +144,17 @@ cards only.
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-|  |  |  |
+| How much does it cost to climb Kestrelford's parish church tower? | Yes | 0.449 |
+| What time does Brightwater's Tuesday market finish? | Yes | 0.232 |
+| How often do Marchwood's trams run on weekdays? | Yes | 0.244 |
+| How do restaurant prices on Halden Bay's harbour front compare with Fell Street? | Yes | 0.222 |
+| When do tours of the working watermill at Givens Mill run? | Yes | 0.366 |
+| What is the capital of Mongolia? | No | 0.754 |
+| How do I change the oil in a diesel engine? | No | 0.888 |
+| Who won the 1994 World Cup? | No | 0.899 |
+| What is the recommended dosage of ibuprofen for a headache? | No | 0.835 |
+| How do I write a for loop in Rust? | No | 0.836 |
+
 
 ## How I Used AI
 
