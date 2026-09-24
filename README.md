@@ -187,15 +187,92 @@ Sources retrieved: guide_brightwater.md, guide_eating.md, guide_regional_transpo
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunks contain the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Chunks contain expected answer and place name | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 5. Expected answer in final answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
 
 <!-- Underneath, paste the REAL output for each criterion from one of your
      runs — the actual text your system produced, not a description of it.
      Name the file and function that produced it. -->
+
+### Real Output (copied directly from `results/run_2026-09-23_1738_before.md`)
+
+- Produced by: `run_eval.py::main` calling `generate.py::answer_from_chunks` and `gate.py::check`
+
+## The relevance gate on out-of-corpus questions
+
+Produced by `run_eval.py::check_out_of_scope`, cutoff 0.6. Refused 5 of 5.
+
+Retrieval is deterministic and the gate is a comparison against a
+fixed number, so these do not vary between runs — one pass over the
+list is the whole measurement.
+
+| Out-of-scope question | Best distance | Gate |
+|---|---|---|
+| What is the capital of Mongolia? | 0.754 | refused |
+| How do I change the oil in a diesel engine? | 0.888 | refused |
+| Who won the 1994 World Cup? | 0.899 | refused |
+| What is the recommended dosage of ibuprofen for a headache? | 0.835 | refused |
+| How do I write a for loop in Rust? | 0.836 | refused |
+
+---
+
+## Real output
+
+### How much does it cost to climb Kestrelford's parish church tower? — run 1
+
+- Best distance: 0.4487 (passed the gate)
+- Sources retrieved: guide_brightwater.md, guide_givens_mill.md, guide_kestrelford.md
+
+```
+It costs £2 to climb Kestrelford's parish church tower. 
+
+Source: `guide_kestrelford.md`
+```
+
+### What time does Brightwater's Tuesday market finish? — run 1
+
+- Best distance: 0.2319 (passed the gate)
+- Sources retrieved: guide_brightwater.md, guide_eating.md, guide_regional_transport.md, guide_seasons.md
+
+```
+Brightwater's Tuesday market is finished by 1pm. 
+
+Sources: `guide_eating.md` and `guide_brightwater.md`
+```
+
+### How often do Marchwood's trams run on weekdays? — run 1
+
+- Best distance: 0.2437 (passed the gate)
+- Sources retrieved: guide_eating.md, guide_kestrelford.md, guide_marchwood.md
+
+```
+Marchwood's trams run every 8 minutes on weekdays. 
+
+Source: guide_marchwood.md
+```
+
+### How do restaurant prices on Halden Bay's harbour front compare with Fell Street? — run 1
+
+- Best distance: 0.2217 (passed the gate)
+- Sources retrieved: guide_eating.md, guide_halden_bay.md, guide_regional_transport.md
+
+```
+Prices on Halden Bay's harbour front are roughly double those on Fell Street for comparable food. 
+
+This information comes from *guide_halden_bay.md* and *guide_eating.md*.
+```
+
+### When do tours of the working watermill at Givens Mill run? — run 1
+
+- Best distance: 0.3662 (passed the gate)
+- Sources retrieved: guide_accessibility.md, guide_givens_mill.md
+
+```
+The mill runs tours on the hour from 11 to 3 (guide_givens_mill.md).
+```
 
 ## Verdicts
 
@@ -210,11 +287,11 @@ Sources retrieved: guide_brightwater.md, guide_eating.md, guide_regional_transpo
 
 | # | Criterion | Verdict | How I decided |
 |---|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
+| 1 | Retrieved chunks contain the answer | MET | In all 3 runs, for 5/5 questions the top retrieved chunks contained the exact answer text. |
+| 2 | Every answer names a source | MET | All 15 generated responses across the 3 runs cited at least one `.md` source file explicitly. |
+| 3 | Gate stops out-of-corpus questions | MET | All 5 out-of-scope questions had best distance between 0.754 and 0.899, comfortably over the 0.6 cutoff and refused. |
+| 4 | Chunks contain expected answer and place name | MET | Section-aware chunking prepended the `# Town` title to every section chunk, ensuring all 5/5 questions had chunks containing both the answer and the place name. |
+| 5 | Expected answer in final answer | MET | All 15 generated responses (5 questions × 3 runs) contained the expected target substring without exception. |
 
 ## Diagnoses
 
