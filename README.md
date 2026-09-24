@@ -313,6 +313,10 @@ The mill runs tours on the hour from 11 to 3 (guide_givens_mill.md).
 
      Milestone 3. -->
 
+All five criteria passed in all three runs, so there were no individual failures to trace to loading, chunking, embedding, retrieval, or generation. The result is encouraging, but it does not prove the system handles difficult questions. The in-scope questions used clear town names and specific facts, and the out-of-scope questions were from unrelated subjects, which made the retrieval gate easier to test.
+
+The main limitation is the test design. The closest in-scope distance was 0.449 and the closest out-of-scope distance was 0.754, but I did not test near-miss questions that share words with the guides. I would strengthen the evaluation by using paraphrased in-scope questions, testing top-1 or top-2 retrieval instead of top-5, and adding out-of-scope questions about missing topics in real towns.
+
 ## The Improvement
 
 **What I changed:**
