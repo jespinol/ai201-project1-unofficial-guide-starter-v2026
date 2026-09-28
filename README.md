@@ -160,6 +160,8 @@ Sources retrieved: guide_brightwater.md, guide_eating.md, guide_regional_transpo
 
 **2.** When evaluating the starter's fixed-size chunking, the AI analyzed sample chunks and highlighted that document endings produced sentence fragments lacking place names. During initial iteration in some chunks I did not notice this issue as they appeared complete sentences, which led me to believe the fixed-sized chunking was producing very good responses. The AI helped identify these edge-case fragments, which led to implementing a section-aware chunker that splits on headers and add the document title to keep every chunk self-contained.
 
+**3.** In Unit 2 I asked the AI to help implement hybrid search using the existing BM25 dependency. It added keyword matching alongside semantic search. After running the same tests, the criteria still passed, but the closest out-of-scope result moved nearer to the cutoff and the Marchwood answer dropped in rank. I kept those negative results in the README instead of describing the change as an improvement.
+
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
      claims earns nothing.
@@ -443,9 +445,13 @@ The Marchwood answer moved from first place to third, and the closest out of sco
 
      Milestone 5. -->
 
+No criteria remained missed after the hybrid-search change. However, the gate is still a concern, i.e. the closest out-of-scope question scored 0.620, just above the 0.6 cutoff. I would test more near-miss questions and reconsider the semantic/keyword balance, but stopped after one experiment so I could measure its effect without combining multiple improvements.
+
 ## What I'd Do Differently
 
 <!-- Knowing what you know now — which of your five criteria would you write
      differently, and why?
 
      Milestone 5. -->
+
+I would make Criteria 1 more specific about how many retrieved chunks count. Saying a retrieved chunk contains the answer does not distinguish the top result from a worse result. I would also add near-miss questions to Criteria 3 since unrelated questions like asking about Rust or Mongolia did not test whether the gate can reject a question that sounds like it should belong.
