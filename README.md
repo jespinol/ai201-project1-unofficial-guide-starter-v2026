@@ -197,11 +197,12 @@ Sources retrieved: guide_brightwater.md, guide_eating.md, guide_regional_transpo
      runs — the actual text your system produced, not a description of it.
      Name the file and function that produced it. -->
 
+```
 ### Real Output (copied directly from `results/run_2026-09-23_1738_before.md`)
 
 - Produced by: `run_eval.py::main` calling `generate.py::answer_from_chunks` and `gate.py::check`
 
-## The relevance gate on out-of-corpus questions
+#### The relevance gate on out-of-corpus questions
 
 Produced by `run_eval.py::check_out_of_scope`, cutoff 0.6. Refused 5 of 5.
 
@@ -218,8 +219,6 @@ list is the whole measurement.
 | How do I write a for loop in Rust? | 0.836 | refused |
 
 ---
-
-## Real output
 
 ### How much does it cost to climb Kestrelford's parish church tower? — run 1
 
@@ -274,6 +273,8 @@ This information comes from *guide_halden_bay.md* and *guide_eating.md*.
 The mill runs tours on the hour from 11 to 3 (guide_givens_mill.md).
 ```
 
+```
+
 ## Verdicts
 
 <!-- MET or MISSED for each of the five, against the target you wrote last
@@ -319,9 +320,9 @@ The main limitation is the test design. The closest in-scope distance was 0.449 
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:** I added a hybrid retrieval mode in `store.py::search` so it looks at both the meaning of a question and the specific words it contains.
 
-**Why I picked it:**
+**Why I picked it:** The questions include details like town names, prices, times, and phrases e.g. “XYZ minutes.” Semantic search looks for text with a similar meaning, but it could rank a somewhat related chunk above one containing the exact detail. Hybrid search also checks for matching words, so I tried it to see whether that would bring the most specific chunk closer to the top.
 
 <!-- Connect it to a specific diagnosis above in one sentence. If you can't,
      you picked a fix because it sounded impressive. -->
@@ -333,13 +334,97 @@ The main limitation is the test design. The closest in-scope distance was 0.449 
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunks contain the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Chunks contain expected answer and place name | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 5. Expected answer in final answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+
+```
+### Real Output (copied directly from `results/run_2026-09-23_1824_after.md`)
+
+## The relevance gate on out-of-corpus questions
+
+Produced by: `run_eval.py::main` calling `generate.py::answer_from_chunks` and `gate.py::check`
+
+Produced by `run_eval.py::check_out_of_scope`, cutoff 0.6. Refused 5 of 5.
+
+Retrieval is deterministic and the gate is a comparison against a
+fixed number, so these do not vary between runs — one pass over the
+list is the whole measurement.
+
+| Out-of-scope question | Best distance | Gate |
+|---|---|---|
+| What is the capital of Mongolia? | 0.620 | refused |
+| How do I change the oil in a diesel engine? | 0.733 | refused |
+| Who won the 1994 World Cup? | 0.728 | refused |
+| What is the recommended dosage of ibuprofen for a headache? | 0.653 | refused |
+| How do I write a for loop in Rust? | 0.661 | refused |
+
+---
+
+## Real output
+
+### How much does it cost to climb Kestrelford's parish church tower? — run 1
+
+- Best distance: 0.3141 (passed the gate)
+- Sources retrieved: guide_eating.md, guide_givens_mill.md, guide_kestrelford.md
+
+```
+It costs £2 to climb Kestrelford's parish church tower. 
+
+Source: guide_kestrelford.md
+```
+
+### What time does Brightwater's Tuesday market finish? — run 1
+
+- Best distance: 0.1623 (passed the gate)
+- Sources retrieved: guide_brightwater.md, guide_eating.md, guide_kestrelford.md, guide_regional_transport.md, guide_seasons.md
+
+```
+Brightwater's Tuesday market finishes by 1pm. 
+
+This comes from `guide_brightwater.md` and `guide_eating.md`.
+```
+
+### How often do Marchwood's trams run on weekdays? — run 1
+
+- Best distance: 0.3089 (passed the gate)
+- Sources retrieved: guide_eating.md, guide_kestrelford.md, guide_marchwood.md, guide_regional_transport.md
+
+```
+Marchwood's trams run every 8 minutes on weekdays (guide_marchwood.md).
+```
+
+### How do restaurant prices on Halden Bay's harbour front compare with Fell Street? — run 1
+
+- Best distance: 0.1552 (passed the gate)
+- Sources retrieved: guide_eating.md, guide_halden_bay.md
+
+```
+Prices on Halden Bay's harbour front are roughly double those on Fell Street for comparable food. 
+
+This comes from *guide_halden_bay.md* and *guide_eating.md*.
+```
+
+### When do tours of the working watermill at Givens Mill run? — run 1
+
+- Best distance: 0.3081 (passed the gate)
+- Sources retrieved: guide_accessibility.md, guide_givens_mill.md
+
+```
+Tours of the mill run on the hour from 11 to 3, and the mill itself runs from March to November (closed entirely in winter). 
+
+Source: `guide_givens_mill.md`
+```
+
+```
 
 **Did it help?**
+
+The hybrid search didn't change the final scores. All five criteria still passed in all three runs. But it did change the results underneath.
+
+The Marchwood answer moved from first place to third, and the closest out of scope question moved from 0.754 to 0.620. Since 0.620 is closer to the cutoff, I cannot say this improvement helped. Actually it may make the gate less reliable for questions that are similar to the guides but outside their coverage.
 
 <!-- Say plainly whether it did, and how you know. If it made things worse,
      say that — a change that backfired, honestly reported, earns full credit

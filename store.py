@@ -44,6 +44,51 @@ class Result:
     produced_by: str
 
 
+def _tokens(text: str) -> list[str]:
+    return text.lower().split()
+
+
+def _hybrid_results(collection, question: str, top_k: int) -> list[Result]:
+    from rank_bm25 import BM25Okapi
+
+    raw = collection.get(include=["documents", "metadatas"])
+    documents = raw["documents"]
+    metadatas = raw["metadatas"]
+    semantic_raw = collection.query(
+        query_embeddings=embed([question]),
+        n_results=len(documents),
+        include=["distances"],
+    )
+    semantic_by_id = dict(zip(semantic_raw["ids"][0], semantic_raw["distances"][0]))
+    keyword_scores = BM25Okapi([_tokens(document) for document in documents]).get_scores(
+        _tokens(question)
+    )
+    max_keyword_score = max(keyword_scores, default=0.0)
+    ranked = []
+
+    for index, (doc_id, text, meta, keyword_score) in enumerate(
+        zip(raw["ids"], documents, metadatas, keyword_scores)
+    ):
+        distance = semantic_by_id[doc_id]
+        keyword_distance = (
+            1.0 - (keyword_score / max_keyword_score) if max_keyword_score else 1.0
+        )
+        combined_distance = 0.7 * float(distance) + 0.3 * keyword_distance
+        ranked.append((combined_distance, index, text, meta))
+
+    ranked.sort(key=lambda item: item[0])
+    return [
+        Result(
+            text=text,
+            source=str(meta.get("source", "unknown")),
+            label=f"{meta.get('source', 'unknown')}#{meta.get('index', 0)}",
+            distance=distance,
+            produced_by="store.py::search (hybrid semantic + BM25)",
+        )
+        for distance, _, text, meta in ranked[:top_k]
+    ]
+
+
 _model = None
 
 # The model Chroma bundles. Anything else in config.EMBEDDING_MODEL means
@@ -198,6 +243,9 @@ def search(
         raise RuntimeError(
             f"No index called '{name}'. Run `python app.py index` first."
         ) from exc
+
+    if variant == "hybrid":
+        return _hybrid_results(collection, question, top_k)
 
     raw = collection.query(
         query_embeddings=embed([question]),
